@@ -27,6 +27,7 @@
 		14BC84E22567878C00D3A199 /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BC84E12567878C00D3A199 /* UIViewController+Extension.swift */; };
 		14BC84E72567892F00D3A199 /* InformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BC84E62567892F00D3A199 /* InformationViewController.swift */; };
 		14BC84EC256796E000D3A199 /* LocationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BC84EB256796E000D3A199 /* LocationResponse.swift */; };
+		14BC84F425683DCD00D3A199 /* PreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BC84F325683DCD00D3A199 /* PreviewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +74,7 @@
 		14BC84E12567878C00D3A199 /* UIViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extension.swift"; sourceTree = "<group>"; };
 		14BC84E62567892F00D3A199 /* InformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationViewController.swift; sourceTree = "<group>"; };
 		14BC84EB256796E000D3A199 /* LocationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationResponse.swift; sourceTree = "<group>"; };
+		14BC84F325683DCD00D3A199 /* PreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,6 +163,7 @@
 				14BC84CC25673F2000D3A199 /* ListController.swift */,
 				14BC84E12567878C00D3A199 /* UIViewController+Extension.swift */,
 				14BC84E62567892F00D3A199 /* InformationViewController.swift */,
+				14BC84F325683DCD00D3A199 /* PreviewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -351,6 +354,7 @@
 				14BC84C02567360300D3A199 /* StudentModel.swift in Sources */,
 				1482DF8E244D078700FCF81D /* LoginRequest.swift in Sources */,
 				1482DF8C244D05CB00FCF81D /* OnTheMapResponse.swift in Sources */,
+				14BC84F425683DCD00D3A199 /* PreviewController.swift in Sources */,
 				14BC84EC256796E000D3A199 /* LocationResponse.swift in Sources */,
 				1482DF54244D011D00FCF81D /* SceneDelegate.swift in Sources */,
 				14BC84B32567328800D3A199 /* MapController.swift in Sources */,

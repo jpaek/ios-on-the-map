@@ -26,10 +26,20 @@ class ListController: UIViewController {
         tableView.reloadData()
     }
     
-    @IBAction func pin(_ sender: UIBarButtonItem) {
-        let informationViewController = self.storyboard!.instantiateViewController(withIdentifier: "InformationViewController") as! InformationViewController
-        
-        navigationController!.pushViewController(informationViewController, animated: true)
+    @IBAction func refresh(_ sender: UIBarButtonItem) {
+        refreshLocations()
+    }
+    
+    override func refreshLocations() {
+        _ = Client.getStudentInformation(completion: { students, error in
+            if let error = error {
+                self.showDownloadFailure(message: error.localizedDescription)
+            } else {
+                StudentModel.students = students
+                self.tableView.reloadData()
+            }
+            
+        })
     }
 
 }

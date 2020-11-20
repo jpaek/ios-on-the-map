@@ -222,7 +222,6 @@ class Client {
     class func setStudentInformation(location: StudentInformation, completion: @escaping(Bool, Error?) -> Void) {
         taskForPOSTRequest(url: Endpoints.setStudentInformation.url, responseType: LocationResponse.self, body: location, completion: {response, error in
             if let response = response {
-                print(response)
                 Location.objectId = response.objectId
                 var studentLocation = location
                 studentLocation.objectId = response.objectId
@@ -233,7 +232,6 @@ class Client {
                 completion(true, nil)
             }
             else {
-                print(error)
                 completion(false, error)
             }
         })

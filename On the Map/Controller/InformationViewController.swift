@@ -9,62 +9,87 @@
 import UIKit
 import MapKit
 
-class InformationViewController: UIViewController {
+class InformationViewController: UIViewController, UINavigationControllerDelegate {
     
     @IBOutlet weak var location: UITextField!
     @IBOutlet weak var url: UITextField!
     @IBOutlet weak var spinner: UIActivityIndicatorView!
+    @IBOutlet weak var errorMessage: UILabel!
+    
+    var previousView: UIViewController!
     
     override func viewDidLoad() {
         spinner.isHidden = true
+        errorMessage.text = ""
+    }
+    
+    @IBAction func cancel(_ sender: Any) {
+        dismiss(animated: true, completion: nil)
     }
     
     @IBAction func changeLocation(_ sender: Any) {
-        let searchRequest = MKLocalSearch.Request()
-        searchRequest.naturalLanguageQuery = location.text
-        let geocoder = MKLocalSearch(request: searchRequest)
+        errorMessage.text = ""
         spinner.isHidden = false
-        geocoder.start(completionHandler: { (response, error) in
-            guard let response = response else {
+        if location.text?.isEmpty ?? false || url.text?.isEmpty ?? false {
+            errorMessage.text = "Please provide the location and the link"
+            spinner.isHidden = true
+            return
+        }
+        
+        if let parsedURL = URL(string: url.text ?? "") {
+            if UIApplication.shared.canOpenURL(parsedURL) {
+                let searchRequest = MKLocalSearch.Request()
+                searchRequest.naturalLanguageQuery = location.text
+                let geocoder = MKLocalSearch(request: searchRequest)
+                geocoder.start(completionHandler: { (response, error) in
+                    guard let response = response else {
+                        self.spinner.isHidden = true
+                        self.errorMessage.text = "No location found"
+                        return
+                    }
+                    
+                    if let error = error {
+                        self.spinner.isHidden = true
+                        self.errorMessage.text =  error.localizedDescription
+                        return
+                    }
+                    self.handleSelectedLocation(response)
+                })
+            }
+            else {
+                errorMessage.text =  "Invalid URL"
+                spinner.isHidden = true
                 return
             }
-            let coordinates: CLLocation
-            for item in response.mapItems {
-                if let location_found = item.placemark.location {
-                    print(item)
-                    coordinates = location_found
-                    var studentLocation = Client.createLocationObject(latitude: coordinates.coordinate.latitude, longitude: coordinates.coordinate.longitude, location: self.location.text ?? "", url: self.url.text ?? "")
-                    print(studentLocation)
-                    if Client.Location.objectId == "" {
-                        Client.setStudentInformation(location: studentLocation, completion: {(success, error) in
-                            if let error = error {
-                                print(error)
-                            }
-                            self.spinner.isHidden = true
-                            studentLocation.objectId = Client.Location.objectId
-                            StudentModel.students.insert(studentLocation, at: 0)
-                            self.openMapView()
-                            
-                        })
-                    } else {
-                        studentLocation.objectId = Client.Location.objectId
-                        Client.updateStudentInformation(location: studentLocation, completion: {(success, error) in
-                            self.spinner.isHidden = true
-                            studentLocation.objectId = Client.Location.objectId
-                            StudentModel.students.insert(studentLocation, at: 0)
-                            self.openMapView()
-                        })
-                    }
-                    break
-                }
-            }
-
-        })
+        } else {
+            errorMessage.text = "Invalid URL"
+            spinner.isHidden = true
+            return
+        }
     }
     
-    func openMapView() {
-        let mapViewController = self.storyboard!.instantiateViewController(withIdentifier: "MapController") as! MapController
-        navigationController!.pushViewController(mapViewController, animated: true)
+    func handleSelectedLocation(_ response: MKLocalSearch.Response) {
+        let coordinates: CLLocation
+        for item in response.mapItems {
+            if let location_found = item.placemark.location {
+                print(item)
+                coordinates = location_found
+                var studentLocation = Client.createLocationObject(latitude: coordinates.coordinate.latitude, longitude: coordinates.coordinate.longitude, location: self.location.text ?? "", url: self.url.text ?? "")
+                print(studentLocation)
+                navigateToPreview(studentLocation)
+                self.spinner.isHidden = true
+                self.errorMessage.text = ""
+                break
+            }
+        }
+    }
+    
+    func navigateToPreview(_ studentLocation: StudentInformation) {
+        let previewController = self.storyboard!.instantiateViewController(withIdentifier: "PreviewController") as! PreviewController
+        previewController.location = studentLocation
+        previewController.previousView = previousView
+        //present(previewController, animated: true, completion: nil)
+        self.navigationController!.pushViewController(previewController, animated: true)
     }
     
 }

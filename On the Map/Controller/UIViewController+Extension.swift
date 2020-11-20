@@ -9,6 +9,7 @@
 import UIKit
 
 extension UIViewController {
+    
     @IBAction func logoutTapped(_ sender: UIBarButtonItem) {
         Client.logout(completion: {response, error in
             if let error = error {
@@ -21,8 +22,25 @@ extension UIViewController {
         })
     }
     
+    @IBAction func pin(_ sender: UIBarButtonItem) {
+        let informationViewController = self.storyboard!.instantiateViewController(withIdentifier: "LocationNavigationController") as! UINavigationController
+        let informationView = informationViewController.viewControllers[0] as! InformationViewController
+        informationView.previousView = self
+        present(informationViewController, animated: true, completion: nil)
+    }
+    
+    @objc func refreshLocations() {
+        
+    }
+    
     func showError(message: String) {
         let alertVC = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        show(alertVC, sender: nil)
+    }
+    
+    func showDownloadFailure(message: String) {
+        let alertVC = UIAlertController(title: "Failed to Get Student Locations", message: message, preferredStyle: .alert)
         alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         show(alertVC, sender: nil)
     }

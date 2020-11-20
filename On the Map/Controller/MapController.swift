@@ -12,24 +12,11 @@ import MapKit
 class MapController: UIViewController, MKMapViewDelegate {
     
     @IBOutlet weak var mapView: MKMapView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        _ = Client.getStudentInformation(completion: { students, error in
-            if let error = error {
-                self.showDownloadFailure(message: error.localizedDescription)
-            } else {
-                StudentModel.students = students
-                self.mapView.addAnnotations(self.getAnnotations())
-            }
-            
-        })
-    }
-    
-    @IBAction func pin(_ sender: UIBarButtonItem) {
-        let informationViewController = self.storyboard!.instantiateViewController(withIdentifier: "InformationViewController") as! InformationViewController
-        
-        navigationController!.pushViewController(informationViewController, animated: true)
+        refreshLocations()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -65,10 +52,20 @@ class MapController: UIViewController, MKMapViewDelegate {
         return annotation
     }
     
-    func showDownloadFailure(message: String) {
-        let alertVC = UIAlertController(title: "Failed to Get Student Locations", message: message, preferredStyle: .alert)
-        alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        show(alertVC, sender: nil)
+    @IBAction func refresh(_ sender: UIBarButtonItem) {
+        refreshLocations()
+    }
+    
+    override func refreshLocations() {
+        _ = Client.getStudentInformation(completion: { students, error in
+            if let error = error {
+                self.showDownloadFailure(message: error.localizedDescription)
+            } else {
+                StudentModel.students = students
+                self.mapView.addAnnotations(self.getAnnotations())
+            }
+            
+        })
     }
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
