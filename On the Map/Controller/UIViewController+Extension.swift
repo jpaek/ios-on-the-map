@@ -34,14 +34,20 @@ extension UIViewController {
     }
     
     func showError(message: String) {
-        let alertVC = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-        alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        show(alertVC, sender: nil)
+        DispatchQueue.main.async {
+            let alertVC = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+            alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.show(alertVC, sender: nil)
+        }
+        
     }
     
     func showDownloadFailure(message: String) {
-        let alertVC = UIAlertController(title: "Failed to Get Student Locations", message: message, preferredStyle: .alert)
-        alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        show(alertVC, sender: nil)
+        DispatchQueue.main.async {
+            let alertVC = UIAlertController(title: "Failed to Get Student Locations", message: message, preferredStyle: .alert)
+            alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.show(alertVC, sender: nil)
+        }
+        
     }
 }

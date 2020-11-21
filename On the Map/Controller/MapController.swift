@@ -27,6 +27,7 @@ class MapController: UIViewController, MKMapViewDelegate {
     
     func getAnnotations() -> [MKPointAnnotation] {
         var annotations: [MKPointAnnotation] = [MKPointAnnotation]()
+        mapView.removeAnnotations(mapView.annotations)
         
         for student in StudentModel.students {
             annotations.append(getAnnotation(student))

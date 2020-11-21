@@ -17,8 +17,10 @@ class PreviewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.mapView.addAnnotations([self.getAnnotation()])
+        mapView.removeAnnotations(mapView.annotations)
+        let annotation = self.getAnnotation()
+        mapView.addAnnotations([annotation])
+        zoomMapToAnnotation(annotation)
     }
     
     func getAnnotation() -> MKPointAnnotation {
@@ -26,6 +28,8 @@ class PreviewController: UIViewController {
         let lon = CLLocationDegrees(location.longitude)
         
         let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+        
+        
         
         let firstName = location.firstName
         let lastName = location.lastName
@@ -37,6 +41,11 @@ class PreviewController: UIViewController {
         annotation.subtitle = mediaURL
         
         return annotation
+    }
+    
+    func zoomMapToAnnotation(_ annotation: MKPointAnnotation) {
+        let viewRegion = MKCoordinateRegion(center: annotation.coordinate, latitudinalMeters: CLLocationDistance(200), longitudinalMeters: (200))
+        mapView.setRegion(viewRegion, animated: false)
     }
     
     @IBAction func finish(_ sender: Any) {

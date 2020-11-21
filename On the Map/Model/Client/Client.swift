@@ -12,6 +12,8 @@ class Client {
     struct Auth {
         static var requestToken = ""
         static var sessionId = ""
+        static var firstName = ""
+        static var lastName = ""
     }
     
     struct Location {
@@ -25,6 +27,7 @@ class Client {
         case getStudentInformation
         case setStudentInformation
         case updateStudentInformation(String)
+        case getUserInfo(String)
         
         
         var stringValue: String {
@@ -37,6 +40,8 @@ class Client {
                 return Endpoints.base + "/StudentLocation"
             case .updateStudentInformation(let objectId):
                 return Endpoints.base + "/StudentLocation/\(objectId)"
+            case .getUserInfo(let key):
+                return Endpoints.base + "/users/\(key)"
             }
             
         }
@@ -174,7 +179,15 @@ class Client {
                 else {
                     print(response)
                     Auth.sessionId = response.session!.id
-                    completion(true, nil)
+                    getUserInfo(response.account!.key, completion: {success, error in
+                        if success {
+                            completion(true, nil)
+                        }
+                        else {
+                            completion(false, LoginError.error(message: error?.localizedDescription ?? "Unknown Error"))
+                        }
+                        
+                    })
                 }
             } else {
                 completion(false, error)
@@ -206,6 +219,41 @@ class Client {
         }
         task.resume()
 
+    }
+    
+    /**
+     Since the response from the getting user info is not easily converted into a Codable structure, using JSONSerialization.  Therefore, not using the
+     helper GET response method
+     */
+    class func getUserInfo(_ key: String, completion: @escaping (Bool, Error?) -> Void) {
+        let task = URLSession.shared.dataTask(with: Endpoints.getUserInfo(key).url) { data, response, error in
+            guard let data = data else {
+                DispatchQueue.main.async {
+                    completion(false, error)
+                }
+                return
+            }
+            let range = 5..<data.count
+            let newData = data.subdata(in: range)
+            if let user = try? JSONSerialization.jsonObject(with: newData, options: []) as? [String : Any] {
+                
+                print(user)
+                if let firstName = user["first_name"] as? String {
+                    Auth.firstName = firstName
+                } else {
+                    Auth.firstName = "John"
+                }
+                if let lastName = user["last_name"] as? String {
+                    Auth.lastName = lastName
+                } else {
+                    Auth.lastName = "Doe"
+                }
+                DispatchQueue.main.async {
+                    completion(true, nil)
+                }
+            }
+        }
+        task.resume()
     }
     
     class func getStudentInformation(completion: @escaping ([StudentInformation], Error?) -> Void) {
@@ -253,7 +301,7 @@ class Client {
     }
     
     class func createLocationObject(latitude: Double, longitude: Double, location: String, url: String) -> StudentInformation {
-        let studentInformation = StudentInformation(firstName: "Joseph", lastName: "Johnson", longitude: longitude, latitude: latitude, mapString: location, mediaURL: url, uniqueKey: Auth.sessionId, objectId: nil, createdAt: nil, updatedAt: nil)
+        let studentInformation = StudentInformation(firstName: Auth.firstName, lastName: Auth.lastName, longitude: longitude, latitude: latitude, mapString: location, mediaURL: url, uniqueKey: Auth.sessionId, objectId: nil, createdAt: nil, updatedAt: nil)
         return studentInformation
     }
     

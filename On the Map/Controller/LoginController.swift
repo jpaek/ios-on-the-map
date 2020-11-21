@@ -50,9 +50,13 @@ class LoginController: UIViewController {
     }
     
     func showLoginFailure(message: String) {
-        let alertVC = UIAlertController(title: "Login Failed", message: message, preferredStyle: .alert)
-        alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        show(alertVC, sender: nil)
+        
+        DispatchQueue.main.async {
+            let alertVC = UIAlertController(title: "Login Failed", message: message, preferredStyle: .alert)
+            alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.show(alertVC, sender: nil)
+        }
+        
     }
     
     
